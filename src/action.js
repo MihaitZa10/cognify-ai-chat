@@ -1,5 +1,5 @@
-const form = document.getElementById("messages-form");
-const input = document.getElementById("messages-form-input");
+const form = document.getElementById('messages-form');
+const input = document.getElementById('messages-form-input');
 
 form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -20,5 +20,5 @@ function displayMessage(message, sender) {
 
 function getAssistantResponse(userMessage) {
     //Simulate
-    return "This is a response from the assistant.";
+    return 'This is a response from the assistant.';
 }
