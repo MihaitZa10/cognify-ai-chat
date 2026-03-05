@@ -1,14 +1,16 @@
+import { sendMessage } from './api.js';
+
 const form = document.getElementById('messages-form');
 const input = document.getElementById('messages-form-input');
 
 form.addEventListener('submit', (event) => {
     event.preventDefault();
+    event.stopPropagation();
     const userMessage = input.value;
     displayMessage(userMessage, 'user');
     input.value = '';
     //Here you would typically send the userMessage to the server and get a response
-    const assistantResponse = getAssistantResponse(userMessage);
-    displayMessage(assistantResponse, 'assistant');
+    getAssistantResponse(userMessage).then((text) => displayMessage(text, 'assistant'));
 });
 
 function displayMessage(message, role) {
@@ -20,7 +22,7 @@ function displayMessage(message, role) {
     document.getElementById('messages-history').appendChild(messageDiv);
 }
 
-function getAssistantResponse() {
+async function getAssistantResponse(messages) {
     //Simulate
-    return 'This is a response from the assistant.';
+    return await sendMessage(messages);
 }
