@@ -9,8 +9,13 @@ form.addEventListener('submit', (event) => {
     const userMessage = input.value;
     displayMessage(userMessage, 'user');
     input.value = '';
-    //Here you would typically send the userMessage to the server and get a response
-    getAssistantResponse(userMessage).then((text) => displayMessage(text, 'assistant'));
+
+    const messageElements = document.querySelectorAll('#messages-history chat-message');
+    const messages = Array.from(messageElements).map((element) => ({
+        role: element.getAttribute('role'),
+        content: element.textContent,
+    }));
+    getAssistantResponse(messages).then((text) => displayMessage(text, 'assistant'));
 });
 
 function displayMessage(message, role) {
