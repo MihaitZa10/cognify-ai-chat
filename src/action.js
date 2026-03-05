@@ -11,14 +11,16 @@ form.addEventListener('submit', (event) => {
     displayMessage(assistantResponse, 'assistant');
 });
 
-function displayMessage(message, sender) {
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message', `message-${sender}`);
-    messageDiv.textContent = message;
+function displayMessage(message, role) {
+    const messageDiv = document.createElement('chat-message');
+    messageDiv.setAttribute('role', role);
+    const messageContent = document.createElement('div');
+    messageContent.textContent = message;
+    messageDiv.appendChild(messageContent);
     document.getElementById('messages-history').appendChild(messageDiv);
 }
 
-function getAssistantResponse(userMessage) {
+function getAssistantResponse() {
     //Simulate
     return 'This is a response from the assistant.';
 }

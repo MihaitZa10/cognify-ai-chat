@@ -1,6 +1,9 @@
 .message-assistant {
     text-align: right;
+    background: #e0f2fe;
+    padding: 8px 12px;
 }
 .message-user {
     text-align: left;
+    padding: 12px;
 }
