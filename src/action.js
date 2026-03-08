@@ -1,4 +1,4 @@
-import { sendMessage } from './api.js';
+import { sendMessage, streamAssistantResponse } from './api.js';
 
 const form = document.getElementById('messages-form');
 const input = document.getElementById('messages-form-input');
@@ -15,7 +15,7 @@ form.addEventListener('submit', (event) => {
         role: element.getAttribute('role'),
         content: element.textContent,
     }));
-    getAssistantResponse(messages).then((text) => displayMessage(text, 'assistant'));
+    getAssistantResponse(messages);
 });
 
 function displayMessage(message, role) {
@@ -25,9 +25,12 @@ function displayMessage(message, role) {
     messageContent.textContent = message;
     messageDiv.appendChild(messageContent);
     document.getElementById('messages-history').appendChild(messageDiv);
+    return messageContent;
 }
 
-async function getAssistantResponse(messages) {
-    //Simulate
-    return await sendMessage(messages);
+function getAssistantResponse(messages) {
+    const messageContent = displayMessage('', 'assistant');
+    streamAssistantResponse(messages, (text) => {
+        messageContent.textContent += text;
+    }).then();
 }
