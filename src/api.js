@@ -15,6 +15,5 @@ export async function sendMessage(messages) {
         }),
     });
     const data = await response.json();
-    console.log('API response:', data);
     return data.choices[0].message.content;
 }
