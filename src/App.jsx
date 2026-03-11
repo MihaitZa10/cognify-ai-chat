@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import './App.css';
-import MessageList from './MessageList';
-import MessageForm from './MessageForm';
-import Sidebar from './Sidebar';
+import MessageList from './ChatPanel/MessageList';
+import MessageForm from './ChatPanel/MessageForm';
+import Sidebar from './Sidebar/Sidebar';
 
 function App() {
     const initialMessages = [
