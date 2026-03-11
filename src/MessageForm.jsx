@@ -1,13 +1,13 @@
 import { useState } from 'react';
-function MessageForm({ onSubmit }) {
+function MessageForm({ appendMessage }) {
     const [input, setInput] = useState('');
-    function handleSubmit(event) {
+    function onSubmit(event) {
         event.preventDefault();
-        onSubmit(input);
+        appendMessage(input);
         setInput('');
     }
     return (
-        <form className="p-4 flex" onSubmit={handleSubmit}>
+        <form className="p-4 flex" onSubmit={onSubmit}>
             <div className="flex-1">
                 <input
                     type="text"

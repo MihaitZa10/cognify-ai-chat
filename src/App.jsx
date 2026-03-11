@@ -11,13 +11,13 @@ function App() {
     ];
     const [messages, setMessages] = useState(initialMessages);
 
-    function handleSubmit(input) {
+    function appendMessage(input) {
         setMessages([...messages, { id: messages.length + 1, role: 'user', text: input }]);
     }
     return (
         <>
             <MessageList messages={messages} />
-            <MessageForm onSubmit={handleSubmit} />
+            <MessageForm appendMessage={appendMessage} />
         </>
     );
 }
