@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './App.css';
 import MessageList from './MessageList';
+import MessageForm from './MessageForm';
 
 function App() {
     const initialMessages = [
@@ -9,17 +10,14 @@ function App() {
         { id: 3, role: 'user', text: 'Can you tell me a joke?' },
     ];
     const [messages, setMessages] = useState(initialMessages);
+
+    function handleSubmit(input) {
+        setMessages([...messages, { id: messages.length + 1, role: 'user', text: input }]);
+    }
     return (
         <>
             <MessageList messages={messages} />
-            <button
-                className="p-2 bg-gray-300 hover:bg-gray-400"
-                onClick={() =>
-                    setMessages([...messages, { id: messages.length + 1, role: 'user', text: 'New message' }])
-                }
-            >
-                Add Message
-            </button>
+            <MessageForm onSubmit={handleSubmit} />
         </>
     );
 }
