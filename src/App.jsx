@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './App.css';
 import MessageList from './MessageList';
 import MessageForm from './MessageForm';
+import Sidebar from './Sidebar';
 
 function App() {
     const initialMessages = [
@@ -14,10 +15,14 @@ function App() {
     function appendMessage(input) {
         setMessages([...messages, { id: messages.length + 1, role: 'user', text: input }]);
     }
+    const [activeConversationID, setActiveConversationID] = useState(1);
     return (
         <>
-            <MessageList messages={messages} />
-            <MessageForm appendMessage={appendMessage} />
+            <Sidebar activeConversationID={activeConversationID} setActiveConversationID={setActiveConversationID} />
+            <main className="flex flex-col flex-1">
+                <MessageList messages={messages} />
+                <MessageForm appendMessage={appendMessage} />
+            </main>
         </>
     );
 }
