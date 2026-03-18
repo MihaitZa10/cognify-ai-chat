@@ -1,21 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import Sidebar from './Sidebar/Sidebar';
 import ChatPanel from './ChatPanel/ChatPanel';
-
+import { getMessages, createMessage } from './api/messages';
 function App() {
-    const initialMessages = [
-        { id: 1, role: 'user', text: 'Hello, how are you?' },
-        { id: 2, role: 'assistant', text: "I'm good, thank you! How can I assist you today?" },
-        { id: 3, role: 'user', text: 'Can you tell me a joke?' },
-        { id: 4, role: 'assistant', text: 'Of course, what kind of joke do you want?' },
-    ];
-    const [messages, setMessages] = useState(initialMessages);
-
-    function appendMessage(input) {
-        setMessages([...messages, { id: messages.length + 1, role: 'user', text: input }]);
-    }
+    const [messages, setMessages] = useState([]);
     const [activeConversationID, setActiveConversationID] = useState(1);
+    useEffect(() => {
+        getMessages(activeConversationID).then(setMessages);
+    }, [activeConversationID, messages]);
+    function appendMessage(input) {
+        createMessage(activeConversationID, 'user', input).then((newMessage) => {
+            setMessages([...messages]);
+        });
+    }
     return (
         <>
             <Sidebar activeConversationID={activeConversationID} setActiveConversationID={setActiveConversationID} />

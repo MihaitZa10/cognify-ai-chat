@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Conversation from './Conversation';
+import ConversationList from './ConversationList';
 import { createConversation, getConversations } from '../api/conversations';
 import AddButton from './AddButton';
 function Sidebar({ activeConversationID, setActiveConversationID }) {
@@ -8,18 +8,6 @@ function Sidebar({ activeConversationID, setActiveConversationID }) {
     useEffect(() => {
         getConversations().then(setConversations);
     }, [conversations]);
-
-    const conversationElements = [];
-    for (const conversation of conversations) {
-        conversationElements.push(
-            <Conversation
-                key={conversation.id}
-                title={conversation.title}
-                isActive={activeConversationID === conversation.id}
-                setActive={() => setActiveConversationID(conversation.id)}
-            />,
-        );
-    }
 
     function createNewConversation() {
         createConversation('New Conversation').then((newConversation) => {
@@ -31,7 +19,11 @@ function Sidebar({ activeConversationID, setActiveConversationID }) {
             <div>
                 <AddButton createNewConversation={createNewConversation} />
             </div>
-            {conversationElements}
+            <ConversationList
+                conversations={conversations}
+                activeConversationID={activeConversationID}
+                setActiveConversationID={setActiveConversationID}
+            />
         </aside>
     );
 }
