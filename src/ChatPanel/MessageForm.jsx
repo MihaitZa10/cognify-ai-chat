@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 function MessageForm({ appendMessage }) {
     const [input, setInput] = useState('');
     const [counter, setCounter] = useState(0);
