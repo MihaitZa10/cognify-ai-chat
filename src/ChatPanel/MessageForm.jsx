@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-function MessageForm({ appendMessage }) {
+function MessageForm({ appendMessage, isLoading }) {
     const [input, setInput] = useState('');
     const [counter, setCounter] = useState(0);
     function onSubmit(event) {
         event.preventDefault();
+        if (isLoading) return;
         appendMessage(input);
         setInput('');
         setCounter(counter + 1);
@@ -23,8 +24,12 @@ function MessageForm({ appendMessage }) {
                 />
             </div>
             <div>
-                <button type="submit" className="ml-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                    Send
+                <button
+                    type="submit"
+                    disabled={isLoading || !input.trim()}
+                    className="ml-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                    {isLoading ? '...' : 'Send'}
                 </button>
             </div>
         </form>

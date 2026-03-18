@@ -6,20 +6,28 @@ import { getMessages, createMessage } from './api/messages';
 function App() {
     const [messages, setMessages] = useState([]);
     const [activeConversationID, setActiveConversationID] = useState(1);
+    const [isLoading, setIsLoading] = useState(false);
     useEffect(() => {
         getMessages(activeConversationID).then(setMessages);
-    }, [activeConversationID, messages]);
-    function appendMessage(input) {
-        createMessage(activeConversationID, input).then(() => {
-            getMessages(activeConversationID).then((newMessages) => {
-                setMessages([...newMessages]);
-            });
-        });
+    }, [activeConversationID]);
+    async function appendMessage(input) {
+        if (!input.trim()) return;
+        setIsLoading(true);
+
+        try {
+            await createMessage(activeConversationID, input);
+            const updatedMessages = await getMessages(activeConversationID);
+            setMessages([...updatedMessages]);
+        } catch (error) {
+            console.error('Failed to get AI response:', error);
+        } finally {
+            setIsLoading(false);
+        }
     }
     return (
         <>
             <Sidebar activeConversationID={activeConversationID} setActiveConversationID={setActiveConversationID} />
-            <ChatPanel messages={messages} appendMessage={appendMessage} />
+            <ChatPanel messages={messages} appendMessage={appendMessage} isLoading={isLoading} />
         </>
     );
 }
