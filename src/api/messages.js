@@ -21,10 +21,11 @@ export async function getMessages(conversationID) {
 export async function createMessage(conversationID, role, text) {
     const conversatHistory = MESSAGES_DATABASE[conversationID] ?? [];
     const id = conversatHistory.length + 1;
-    conversatHistory.push({
+    const newMessage = {
         id,
         role,
         text,
-    });
-    return id;
+    };
+    conversatHistory.push(newMessage);
+    return newMessage;
 }

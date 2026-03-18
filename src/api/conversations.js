@@ -8,10 +8,11 @@ export async function getConversations() {
 }
 
 export async function createConversation(title) {
-    const id = CONVERSATION_DATABASE.length;
-    CONVERSATION_DATABASE.push({
+    const id = CONVERSATION_DATABASE.length + 1;
+    const newConversation = {
         id,
         title,
-    });
-    return id;
+    };
+    CONVERSATION_DATABASE.push(newConversation);
+    return newConversation;
 }

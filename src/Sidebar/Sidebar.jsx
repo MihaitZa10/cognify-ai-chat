@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Conversation from './Conversation';
-
+import { createConversation, getConversations } from '../api/conversations';
+import AddButton from './AddButton';
 function Sidebar({ activeConversationID, setActiveConversationID }) {
-    const initialConversations = [
-        { id: 1, title: 'How is your day?' },
-        { id: 2, title: 'Help me with homework' },
-    ];
-    const [conversations, setConversations] = useState(initialConversations);
+    const [conversations, setConversations] = useState([]);
+
+    useEffect(() => {
+        getConversations().then(setConversations);
+    }, [conversations]);
+
     const conversationElements = [];
     for (const conversation of conversations) {
         conversationElements.push(
@@ -20,16 +22,14 @@ function Sidebar({ activeConversationID, setActiveConversationID }) {
     }
 
     function createNewConversation() {
-        const newConversation = { id: conversations.length + 1, title: 'New Conversation' };
-        setConversations([...conversations, newConversation]);
-        setActiveConversationID(newConversation.id);
+        createConversation('New Conversation').then((newConversation) => {
+            setActiveConversationID(newConversation.id);
+        });
     }
     return (
         <aside className="flex flex-col w-64 bg-gray-900 text-white py-4 px-3">
             <div>
-                <button className="w-full bg-red-500 hover:bg-red-600 py-2 my-2" onClick={createNewConversation}>
-                    New chat
-                </button>
+                <AddButton createNewConversation={createNewConversation} />
             </div>
             {conversationElements}
         </aside>
