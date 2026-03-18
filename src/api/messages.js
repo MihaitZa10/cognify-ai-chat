@@ -1,3 +1,5 @@
+import { llmRequest } from './openrouter';
+
 const MESSAGES_DATABASE = {
     1: [
         { id: 1, role: 'user', text: 'Hello, how are you?' },
@@ -18,14 +20,17 @@ export async function getMessages(conversationID) {
     return MESSAGES_DATABASE[conversationID] ?? [];
 }
 
-export async function createMessage(conversationID, role, text) {
+export async function createMessage(conversationID, text) {
     const conversatHistory = MESSAGES_DATABASE[conversationID] ?? [];
     const id = conversatHistory.length + 1;
     const newMessage = {
         id,
-        role,
+        role: 'user',
         text,
     };
     conversatHistory.push(newMessage);
+    const aiResponse = await llmRequest(conversatHistory);
+    const aiMessage = { id: id + 1, role: 'assistant', text: aiResponse };
+    conversatHistory.push(aiMessage);
     return newMessage;
 }

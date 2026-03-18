@@ -10,8 +10,10 @@ function App() {
         getMessages(activeConversationID).then(setMessages);
     }, [activeConversationID, messages]);
     function appendMessage(input) {
-        createMessage(activeConversationID, 'user', input).then((newMessage) => {
-            setMessages([...messages]);
+        createMessage(activeConversationID, input).then(() => {
+            getMessages(activeConversationID).then((newMessages) => {
+                setMessages([...newMessages]);
+            });
         });
     }
     return (
