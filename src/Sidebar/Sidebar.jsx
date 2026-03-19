@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import ConversationList from './ConversationList';
 import { createConversation, getConversations } from '../api/conversations';
 import AddButton from './AddButton';
-function Sidebar({ activeConversationID, setActiveConversationID }) {
+import { redirect } from 'next/navigation';
+
+function Sidebar({ activeConversationID }) {
     const [conversations, setConversations] = useState([]);
 
     useEffect(() => {
@@ -11,7 +13,7 @@ function Sidebar({ activeConversationID, setActiveConversationID }) {
 
     function createNewConversation() {
         createConversation('New Conversation').then((newConversation) => {
-            setActiveConversationID(newConversation.id);
+            redirect(`/chats/${newConversation.id}`);
         });
     }
     return (
@@ -19,11 +21,7 @@ function Sidebar({ activeConversationID, setActiveConversationID }) {
             <div>
                 <AddButton createNewConversation={createNewConversation} />
             </div>
-            <ConversationList
-                conversations={conversations}
-                activeConversationID={activeConversationID}
-                setActiveConversationID={setActiveConversationID}
-            />
+            <ConversationList activeConversationID={activeConversationID} conversations={conversations} />
         </aside>
     );
 }
