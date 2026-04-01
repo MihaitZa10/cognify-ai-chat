@@ -6,7 +6,10 @@ function ConversationList({ conversations, activeConversationID }) {
     for (const conversation of conversations) {
         conversationElements.push(
             <Link href={`/chats/${conversation.id}`} key={conversation.id}>
-                <Conversation title={conversation.title} isActive={activeConversationID === conversation.id} />
+                <Conversation
+                    title={conversation.title}
+                    isActive={String(activeConversationID) === String(conversation.id)}
+                />
             </Link>,
         );
     }

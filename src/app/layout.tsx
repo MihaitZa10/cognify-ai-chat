@@ -23,8 +23,13 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-            <body className="min-h-full flex flex-col">{children}</body>
+        <html lang="en">
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                <nav className="relative bg-gray-800/50 my-2">
+                    <h3 className="p-2">Cognify AI chat</h3>
+                </nav>
+                <div id="root">{children}</div>
+            </body>
         </html>
     );
 }
