@@ -4,9 +4,10 @@ export async function getMessages(conversationID) {
 }
 
 export async function createMessage(conversationID, text) {
-    const response = await fetch('/api/conversations', {
+    const conversationIDNUMBER = Number.parseInt(conversationID);
+    const response = await fetch('/api/messages', {
         method: 'POST',
-        body: JSON.stringify({ conversationID, text }),
+        body: JSON.stringify({ conversationID: conversationIDNUMBER, text }),
     });
     return await response.json();
 }

@@ -11,21 +11,27 @@ function ChatPanel({ activeConversationID }) {
 
     useEffect(() => {
         getMessages(activeConversationID).then(setMessages);
-    }, [activeConversationID]); // ✅ ONLY id here
+    }, [activeConversationID]);
 
     async function appendMessage(input) {
         if (!input.trim() || isLoading) return;
 
+        const userMessage = {
+            id: Date.now(),
+            role: 'user',
+            text: input,
+        };
+
+        const newMessages = [...messages, userMessage];
+        setMessages(newMessages);
         setIsLoading(true);
 
         try {
-            await createMessage(activeConversationID, input);
-
-            // re-fetch messages
-            const updatedMessages = await getMessages(activeConversationID);
-            setMessages(updatedMessages);
+            const aiMessage = await createMessage(activeConversationID, input);
+            setMessages([...newMessages, aiMessage]);
         } catch (err) {
             console.error(err);
+            setMessages(messages);
         } finally {
             setIsLoading(false);
         }
