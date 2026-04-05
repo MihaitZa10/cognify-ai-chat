@@ -8,26 +8,28 @@ async function completionsRequest(model, messages, stream = false) {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${API_KEY}`,
-            'Access-Control-Allow-Origin': '*',
         },
         body: JSON.stringify({
-            model: model,
-            messages: messages,
-            stream: stream,
+            model,
+            messages,
+            stream,
         }),
     });
 }
 
 export async function llmRequest(messages) {
-    const formattedMessages = messages.map((m) => ({
-        role: m.role,
-        content: m.text,
-    }));
+    const response = await completionsRequest(MODEL, messages);
 
-    const response = await completionsRequest(MODEL, formattedMessages);
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`OpenRouter request failed: ${response.status} ${errorText}`);
+    }
+
     const data = await response.json();
 
-    if (data.error) throw new Error(data.error.message);
+    if (data.error) {
+        throw new Error(data.error.message);
+    }
 
-    return data.choices[0].message.content;
+    return data.choices?.[0]?.message?.content ?? 'No response from model.';
 }

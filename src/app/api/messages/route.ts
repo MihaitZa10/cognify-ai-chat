@@ -27,20 +27,40 @@ async function getMessages(conversationID: number) {
 }
 
 async function createMessage(conversationID: number, text: string) {
-    const conversatHistory = MESSAGES_DATABASE.get(conversationID) ?? [];
-    console.log(conversationID, conversatHistory);
+    let conversatHistory = MESSAGES_DATABASE.get(conversationID);
+
+    if (!conversatHistory) {
+        conversatHistory = [];
+        MESSAGES_DATABASE.set(conversationID, conversatHistory);
+    }
+
     const id = conversatHistory.length + 1;
+
     const newMessage = {
         id,
         role: 'user',
         text,
     };
+
     conversatHistory.push(newMessage);
-    const openAImessages = conversatHistory.map(({ role, text }) => ({ role, content: text }));
+
+    const openAImessages = conversatHistory.map(({ role, text }) => ({
+        role,
+        content: text,
+    }));
+
     console.log('Sending to model:', openAImessages);
+
     const aiResponse = await llmRequest(openAImessages);
-    const aiMessage = { id: id + 1, role: 'assistant', text: aiResponse };
+
+    const aiMessage = {
+        id: id + 1,
+        role: 'assistant',
+        text: aiResponse,
+    };
+
     conversatHistory.push(aiMessage);
+
     return aiMessage;
 }
 
