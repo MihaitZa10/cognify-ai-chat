@@ -1,79 +1,48 @@
-import { llmRequest } from '../openrouter.js';
+import { prisma } from '../db';
+import { llmRequest } from '../openrouter';
 
-const MESSAGES_DATABASE: Map<number, any> = new Map([
-    [
-        1,
-        [
-            { id: 1, role: 'user', text: 'Hello, how are you?' },
-            { id: 2, role: 'assistant', text: "I'm good, thank you! How can I assist you today?" },
-            { id: 3, role: 'user', text: 'Can you tell me a joke?' },
-            { id: 4, role: 'assistant', text: 'Of course, what kind of joke do you want?' },
-        ],
-    ],
-    [
-        2,
-        [
-            {
-                id: 1,
-                role: 'user',
-                text: 'Help me with my homework? - essay on the topic of the siege of Warsaw during the World War Two.',
-            },
-            { id: 2, role: 'assistant', text: 'Okay! What style do you prefer - consince or detailed?' },
-        ],
-    ],
-]);
-async function getMessages(conversationID: number) {
-    return MESSAGES_DATABASE.get(conversationID) ?? [];
+async function getMessages(conversationId: string) {
+    return await prisma.message.findMany({
+        where: { conversationId },
+        orderBy: { createdAt: 'asc' },
+    });
 }
 
-async function createMessage(conversationID: number, text: string) {
-    let conversatHistory = MESSAGES_DATABASE.get(conversationID);
+async function createMessage(conversationId: string, text: string) {
+    const connect = { conversation: { connect: { id: conversationId } } };
 
-    if (!conversatHistory) {
-        conversatHistory = [];
-        MESSAGES_DATABASE.set(conversationID, conversatHistory);
-    }
+    await prisma.message.create({
+        data: { ...connect, role: 'user', text },
+    });
 
-    const id = conversatHistory.length + 1;
+    const conversationHistory = await prisma.message.findMany({
+        where: { conversationId },
+        orderBy: { createdAt: 'asc' },
+    });
 
-    const newMessage = {
-        id,
-        role: 'user',
-        text,
-    };
-
-    conversatHistory.push(newMessage);
-
-    const openAImessages = conversatHistory.map(({ role, text }) => ({
+    const openAIMessages = conversationHistory.map(({ role, text }: { role: string; text: string }) => ({
         role,
         content: text,
     }));
 
-    console.log('Sending to model:', openAImessages);
+    const aiResponse = await llmRequest(openAIMessages);
 
-    const aiResponse = await llmRequest(openAImessages);
-
-    const aiMessage = {
-        id: id + 1,
-        role: 'assistant',
-        text: aiResponse,
-    };
-
-    conversatHistory.push(aiMessage);
+    const aiMessage = await prisma.message.create({
+        data: { ...connect, role: 'assistant', text: aiResponse },
+    });
 
     return aiMessage;
 }
 
 export async function GET(request: Request) {
     const url = new URL(request.url);
-    const conversationIDstring = url.searchParams.get('conversationID') ?? '0';
-    const conversationID = Number.parseInt(conversationIDstring);
-    const data = await getMessages(conversationID);
+    const conversationId = url.searchParams.get('conversationId') ?? '';
+    const data = await getMessages(conversationId);
     return Response.json(data);
 }
 
 export async function POST(request: Request) {
-    const payload: { conversationID: number; text: string } = await request.json();
-    const newMessage = await createMessage(payload.conversationID, payload.text);
+    const payload: { conversationId: string; text: string } = await request.json();
+    const newMessage = await createMessage(payload.conversationId, payload.text);
     return Response.json(newMessage);
 }

@@ -1,31 +1,29 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-export function useGetMessages(conversationID) {
+export function useGetMessages(conversationId) {
     return useQuery({
-        queryKey: ['messages', conversationID],
-        queryFn: async () => {
-            const res = await fetch(`/api/messages?conversationID=${conversationID}`);
-            if (!res.ok) throw new Error('Failed to fetch messages');
-            return res.json();
-        },
-        enabled: !!conversationID,
+        queryKey: ['messages', conversationId],
+        queryFn: () => fetch(`/api/messages?conversationId=${conversationId}`).then((res) => res.json()),
+        enabled: !!conversationId,
     });
 }
 
-export function useCreateMessage(conversationID, text) {
-    const conversationIDNUMBER = Number.parseInt(conversationID, 10);
+export function useCreateMessage(conversationId, text) {
+    const body = JSON.stringify({ conversationId, text });
+
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: () =>
             fetch('/api/messages', {
                 method: 'POST',
-                body: JSON.stringify({ conversationID: conversationIDNUMBER, text }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body,
             }).then((r) => r.json()),
-
-        onSuccess: (r) => {
-            console.log(r);
-            queryClient.invalidateQueries({ queryKey: ['messages', conversationID] });
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
         },
     });
 }
