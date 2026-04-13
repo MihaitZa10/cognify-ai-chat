@@ -1,16 +1,4 @@
-import { prisma } from '../db';
-
-async function getConversations() {
-    return await prisma.conversation.findMany({
-        orderBy: { createdAt: 'desc' },
-    });
-}
-
-async function createConversation(title: string) {
-    return await prisma.conversation.create({
-        data: { title },
-    });
-}
+import { getConversations, createConversation } from '../../../server/conversations';
 
 export async function GET() {
     const data = await getConversations();
