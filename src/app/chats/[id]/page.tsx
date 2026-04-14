@@ -1,6 +1,6 @@
 import { use } from 'react';
-import Sidebar from '../../../Sidebar/Sidebar';
-import ChatPanel from '../../../ChatPanel/ChatPanel';
+import Sidebar from '../../../components/Sidebar/Sidebar';
+import ChatPanel from '../../../components/ChatPanel/ChatPanel';
 
 interface ChatPageParams {
     id: string;

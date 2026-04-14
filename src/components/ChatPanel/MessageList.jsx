@@ -1,5 +1,5 @@
 'use client';
-import { useMessagesQuery } from '../hooks/messages';
+import { useMessagesQuery } from '../../hooks/messages';
 import ChatMessage from './ChatMessage';
 
 function MessageList({ conversationID }) {

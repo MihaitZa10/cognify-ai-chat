@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Conversation from './Conversation';
-import { useConversationQuery } from '../hooks/conversations';
+import { useConversationQuery } from '../../hooks/conversations';
 
 function ConversationList({ activeConversationID }) {
     const { data: conversations = [] } = useConversationQuery();
