@@ -1,5 +1,6 @@
 import { prisma } from './db';
 import { llmRequest } from './openrouter';
+import { revalidatePath } from 'next/cache';
 export async function getMessages(conversationId: string) {
     return await prisma.message.findMany({
         where: { conversationId },
@@ -18,7 +19,7 @@ export async function createMessage(conversationId: string, text: string) {
         where: { conversationId },
         orderBy: { createdAt: 'asc' },
     });
-
+    revalidatePath(`/chats/${conversationId}`);
     const openAIMessages = conversationHistory.map(({ role, text }: { role: string; text: string }) => ({
         role,
         content: text,
@@ -29,6 +30,6 @@ export async function createMessage(conversationId: string, text: string) {
     const aiMessage = await prisma.message.create({
         data: { ...connect, role: 'assistant', text: aiResponse },
     });
-
+    revalidatePath(`/chats/${conversationId}`);
     return aiMessage;
 }

@@ -1,10 +1,8 @@
-'use client';
-import { useMessagesQuery } from '../../hooks/messages';
 import ChatMessage from './ChatMessage';
+import { getMessages } from '../../server/messages';
 
-function MessageList({ conversationID }) {
-    const response = useMessagesQuery(conversationID);
-    const messages = response.data ?? [];
+async function MessageList({ conversationID }) {
+    const messages = await getMessages(conversationID);
 
     const chatMessages = [];
     for (const message of messages) {
