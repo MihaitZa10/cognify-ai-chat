@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
+import { useRouter } from 'next/navigation';
 export function useConversationQuery() {
     return useQuery({
         queryKey: ['conversations'],
@@ -8,6 +8,7 @@ export function useConversationQuery() {
 }
 
 export function useConversationMutation(title) {
+    const router = useRouter();
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -20,7 +21,7 @@ export function useConversationMutation(title) {
         onSuccess: (r) => {
             console.log(r);
             queryClient.invalidateQueries({ queryKey: ['conversations'] }).then(() => {
-                window.location.href = `/chats/${r.id}`;
+                router.push(`/chats/${r.id}`);
             });
         },
     });
