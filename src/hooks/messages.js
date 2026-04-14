@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-export function useGetMessages(conversationId) {
+export function useMessagesQuery(conversationId) {
     return useQuery({
         queryKey: ['messages', conversationId],
         queryFn: () => fetch(`/api/messages?conversationId=${conversationId}`).then((res) => res.json()),
@@ -8,7 +8,7 @@ export function useGetMessages(conversationId) {
     });
 }
 
-export function useCreateMessage(conversationId, text) {
+export function useMessagesMutation(conversationId, text) {
     const body = JSON.stringify({ conversationId, text });
 
     const queryClient = useQueryClient();

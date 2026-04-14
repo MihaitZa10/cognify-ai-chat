@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import Conversation from './Conversation';
-import { useGetConversations } from '../api/conversations';
+import { useConversationQuery } from '../hooks/conversations';
 
 function ConversationList({ activeConversationID }) {
-    const { data: conversations = [] } = useGetConversations();
+    const { data: conversations = [] } = useConversationQuery();
 
     return (
         <>

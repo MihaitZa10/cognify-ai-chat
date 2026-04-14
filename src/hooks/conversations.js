@@ -1,15 +1,13 @@
-'use client';
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-export function useGetConversations() {
+export function useConversationQuery() {
     return useQuery({
         queryKey: ['conversations'],
         queryFn: () => fetch('/api/conversations').then((res) => res.json()),
     });
 }
 
-export function useCreateConversation(title) {
+export function useConversationMutation(title) {
     const queryClient = useQueryClient();
 
     return useMutation({
