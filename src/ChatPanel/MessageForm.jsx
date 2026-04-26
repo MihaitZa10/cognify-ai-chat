@@ -1,17 +1,22 @@
-import { useState, useEffect } from 'react';
-function MessageForm({ appendMessage, isLoading }) {
+'use client';
+
+import { useState } from 'react';
+import { useCreateMessage } from '../api/messages';
+function MessageForm({ conversationID, isLoading }) {
     const [input, setInput] = useState('');
     const [counter, setCounter] = useState(0);
+
+    const mutation = useCreateMessage(conversationID, input);
+
     function onSubmit(event) {
         event.preventDefault();
         if (isLoading) return;
-        appendMessage(input);
+        mutation.mutate();
         setInput('');
         setCounter(counter + 1);
-    }
-    useEffect(() => {
         console.log(`Form submitted ${counter} times`);
-    }, [counter]);
+    }
+
     return (
         <form className="p-4 flex" onSubmit={onSubmit}>
             <div className="flex-1">
@@ -26,10 +31,10 @@ function MessageForm({ appendMessage, isLoading }) {
             <div>
                 <button
                     type="submit"
-                    disabled={isLoading || !input.trim()}
-                    className="ml-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    disabled={mutation.isPending}
+                    className="ml-2 p-2 bg-pink-500 text-white rounded hover:bg-purple-600"
                 >
-                    {isLoading ? '...' : 'Send'}
+                    {mutation.isPending ? 'Loading...' : 'Send'}
                 </button>
             </div>
         </form>

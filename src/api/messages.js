@@ -1,16 +1,29 @@
-export async function getMessages(conversationID) {
-    const response = await fetch(`/api/messages?conversationID=${conversationID}`);
-    return await response.json();
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+export function useGetMessages(conversationId) {
+    return useQuery({
+        queryKey: ['messages', conversationId],
+        queryFn: () => fetch(`/api/messages?conversationId=${conversationId}`).then((res) => res.json()),
+        enabled: !!conversationId,
+    });
 }
 
-export async function createMessage(conversationID, text) {
-    const conversationIDNUMBER = Number.parseInt(conversationID);
-    const response = await fetch('/api/messages', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
+export function useCreateMessage(conversationId, text) {
+    const body = JSON.stringify({ conversationId, text });
+
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: () =>
+            fetch('/api/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body,
+            }).then((r) => r.json()),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
         },
-        body: JSON.stringify({ conversationID: conversationIDNUMBER, text }),
     });
-    return await response.json();
 }

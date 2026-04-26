@@ -1,6 +1,11 @@
+'use client';
+import { useGetMessages } from '../api/messages';
 import ChatMessage from './ChatMessage';
 
-function MessageList({ messages }) {
+function MessageList({ conversationID }) {
+    const response = useGetMessages(conversationID);
+    const messages = response.data ?? [];
+
     const chatMessages = [];
     for (const message of messages) {
         chatMessages.push(<ChatMessage key={message.id} role={message.role} text={message.text} />);
