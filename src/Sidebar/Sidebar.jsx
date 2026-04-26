@@ -1,29 +1,34 @@
+'use client';
+
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import ConversationList from './ConversationList';
 import { createConversation, getConversations } from '../api/conversations';
 import AddButton from './AddButton';
-function Sidebar({ activeConversationID, setActiveConversationID }) {
+
+function Sidebar({ activeConversationID }) {
     const [conversations, setConversations] = useState([]);
+    const router = useRouter();
 
     useEffect(() => {
         getConversations().then(setConversations);
-    }, [conversations]);
+    }, []);
 
-    function createNewConversation() {
-        createConversation('New Conversation').then((newConversation) => {
-            setActiveConversationID(newConversation.id);
-        });
+    async function createNewConversation() {
+        try {
+            const newConversation = await createConversation('New Conversation');
+            router.push(`/chats/${newConversation.id}`);
+            const updatedConversations = await getConversations();
+            setConversations(updatedConversations);
+        } catch (error) {
+            console.error('Failed to create conversation:', error);
+        }
     }
+
     return (
         <aside className="flex flex-col w-64 bg-gray-900 text-white py-4 px-3">
-            <div>
-                <AddButton createNewConversation={createNewConversation} />
-            </div>
-            <ConversationList
-                conversations={conversations}
-                activeConversationID={activeConversationID}
-                setActiveConversationID={setActiveConversationID}
-            />
+            <AddButton createNewConversation={createNewConversation} />
+            <ConversationList conversations={conversations} activeConversationID={activeConversationID} />
         </aside>
     );
 }
