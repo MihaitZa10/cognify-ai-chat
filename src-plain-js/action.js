@@ -1,4 +1,4 @@
-import { sendMessage, streamAssistantResponse } from './api.js';
+import { streamAssistantResponse } from './api.js';
 
 const form = document.getElementById('messages-form');
 const input = document.getElementById('messages-form-input');
