@@ -11,5 +11,8 @@
         "lint:fix": "eslint . --fix",
         "format": "prettier --write .",
         "format:check": "prettier --check ."
+    },
+    "dependencies": {
+        "serve": "^14.2.6"
     }
 }
