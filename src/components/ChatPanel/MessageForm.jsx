@@ -1,17 +1,13 @@
 'use client';
-
 import { useState } from 'react';
-import { useMessagesMutation } from '../../hooks/messages';
-function MessageForm({ conversationID, isLoading }) {
+
+function MessageForm({ conversationId, sendMessage, isPending }) {
     const [input, setInput] = useState('');
     const [counter, setCounter] = useState(0);
 
-    const mutation = useMessagesMutation(conversationID, input);
-
     function onSubmit(event) {
         event.preventDefault();
-        if (isLoading) return;
-        mutation.mutate();
+        sendMessage({ text: input }, { body: { conversationId } });
         setInput('');
         setCounter(counter + 1);
         console.log(`Form submitted ${counter} times`);
@@ -23,7 +19,7 @@ function MessageForm({ conversationID, isLoading }) {
                 <input
                     type="text"
                     placeholder="Type your message here..."
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className="w-full p-2 border border-gray-500 rounded "
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                 />
@@ -31,10 +27,10 @@ function MessageForm({ conversationID, isLoading }) {
             <div>
                 <button
                     type="submit"
-                    disabled={mutation.isPending}
-                    className="ml-2 p-2 bg-pink-500 text-white rounded hover:bg-purple-600"
+                    className="mx-2 p-2 bg-pink-500 text-white rounded hover:bg-purple-600 "
+                    disabled={isPending}
                 >
-                    {mutation.isPending ? 'Loading...' : 'Send'}
+                    {isPending ? 'Loading...' : 'Send'}
                 </button>
             </div>
         </form>

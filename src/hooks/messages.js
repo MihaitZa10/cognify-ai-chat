@@ -1,30 +1,26 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-export function useMessagesQuery(conversationId) {
+
+export function useMessagesQuery(consversationId) {
     return useQuery({
-        queryKey: ['messages', conversationId],
-        queryFn: () => fetch(`/api/messages?conversationId=${conversationId}`).then((res) => res.json()),
-        enabled: !!conversationId,
+        queryKey: ['messages', consversationId],
+        queryFn: () => fetch(`/api/messages?consversationId=${consversationId}`).then((res) => res.json()),
     });
 }
 
-export function useMessagesMutation(conversationId, text) {
-    const body = JSON.stringify({ conversationId, text });
-    const router = useRouter();
-    const queryClient = useQueryClient();
+export function useMessagesMutation(consversationId, text) {
+    const body = JSON.stringify({ consversationId, text });
 
+    const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: () =>
-            fetch('/api/messages', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body,
-            }).then((r) => r.json()),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
-            router.refresh();
+        mutationFn: () => fetch('/api/messages', { method: 'POST', body }).then((r) => r.json()),
+        onMutate: () => {
+            const newMessage = { id: 'temp', role: 'user', text };
+            const queryKey = ['messages', consversationId];
+            queryClient.setQueryData(queryKey, (old) => (old ? [...old, newMessage] : [newMessage]));
+        },
+        onSettled: () => {
+            const queryKey = ['messages', consversationId];
+            queryClient.invalidateQueries({ queryKey });
         },
     });
 }
