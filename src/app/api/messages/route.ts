@@ -1,38 +1,4 @@
-import { prisma } from '../db';
-import { llmRequest } from '../openrouter';
-
-async function getMessages(conversationId: string) {
-    return await prisma.message.findMany({
-        where: { conversationId },
-        orderBy: { createdAt: 'asc' },
-    });
-}
-
-async function createMessage(conversationId: string, text: string) {
-    const connect = { conversation: { connect: { id: conversationId } } };
-
-    await prisma.message.create({
-        data: { ...connect, role: 'user', text },
-    });
-
-    const conversationHistory = await prisma.message.findMany({
-        where: { conversationId },
-        orderBy: { createdAt: 'asc' },
-    });
-
-    const openAIMessages = conversationHistory.map(({ role, text }: { role: string; text: string }) => ({
-        role,
-        content: text,
-    }));
-
-    const aiResponse = await llmRequest(openAIMessages);
-
-    const aiMessage = await prisma.message.create({
-        data: { ...connect, role: 'assistant', text: aiResponse },
-    });
-
-    return aiMessage;
-}
+import { createMessage, getMessages } from '../../../server/messages';
 
 export async function GET(request: Request) {
     const url = new URL(request.url);
@@ -43,6 +9,6 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
     const payload: { conversationId: string; text: string } = await request.json();
-    const newMessage = await createMessage(payload.conversationId, payload.text);
+    const newMessage = await createMessage(payload.conversationId, payload.text, 'user');
     return Response.json(newMessage);
 }
