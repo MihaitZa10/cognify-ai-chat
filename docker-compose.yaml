@@ -1,0 +1,10 @@
+services:
+    db:
+        image: postgres:18.3
+        environment:
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: cognify
+        ports:
+            - '5432:5432'
+        volumes:
+            - ./data/postgres:/var/lib/postgresql
