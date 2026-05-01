@@ -1,4 +1,4 @@
-const CACHE = 'cognify-v1';
+const CACHE = 'cognify-v2';
 const SHELL = ['/', '/manifest.webmanifest', '/icon-512.png', '/offline.html'];
 
 self.addEventListener('install', (event) => {
@@ -18,17 +18,16 @@ self.addEventListener('fetch', (event) => {
 
     if (request.method !== 'GET') return;
 
-    if (event.request.mode === 'navigate') {
-        event.respondWith(caches.match('/shell.html'));
+    if (request.mode === 'navigate') {
+        event.respondWith(fetch(request).catch(() => caches.match('/offline.html')));
+        return;
     }
 
     event.respondWith(
         fetch(request)
             .then((res) => {
                 const copy = res.clone();
-
                 caches.open(CACHE).then((c) => c.put(request, copy));
-
                 return res;
             })
             .catch(() => caches.match(request)),
