@@ -12,3 +12,25 @@ self.addEventListener('activate', (event) => {
     );
     self.clients.claim();
 });
+
+self.addEventListener('fetch', (event) => {
+    const { request } = event;
+
+    if (request.method !== 'GET') return;
+
+    if (event.request.mode === 'navigate') {
+        event.respondWith(caches.match('/shell.html'));
+    }
+
+    event.respondWith(
+        fetch(request)
+            .then((res) => {
+                const copy = res.clone();
+
+                caches.open(CACHE).then((c) => c.put(request, copy));
+
+                return res;
+            })
+            .catch(() => caches.match(request)),
+    );
+});
